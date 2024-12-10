@@ -17,12 +17,15 @@ void CriarPlanta(int n);
 
 int main(){
     Planta *planta = bibloteca();
-    int n;
+    int n, np;
     cout << "Qual Tamanho" << endl;
     cin >> n;
-    CriarPlanta(n);
-    CriarMatriz(n);
-    
+    cout << "Quantas plantas voce quer criar?" << endl;
+    cin >> np;
+    for(int i=0;i < np;i++){
+        CriarPlanta(n);
+        CriarMatriz(n);
+    }
     //TESTE
     /*
     string nome2;
@@ -88,7 +91,7 @@ void CriarMatriz(int n){
     for(int i = 0; i<4; i++){
         int x = plantas[i].x, y = plantas[i].y;
         if(x != -20)
-            Matriz[x][y] = 'P';
+            Matriz[x][y] = plantas[i].nome[0];
     }
     for(int i = 0; i<n; i++){
         for(int j = 0; j<n; j++){
