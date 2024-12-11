@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include <windows.h>
+#include <cassert>
 using namespace std;
 int dia = 0;
 
@@ -32,6 +33,10 @@ void impComandos();
 void gotoxy(int x, int y);
 void Detalhes();
 int qualPlanta();
+void Podar();
+void Cuidar();
+void TrocarPlanta();
+void Teste_Busca_Bi();
 int BuscaBi(int x, int ini, int fim);
 bool terminaDia();
 Planta* biblioteca();
@@ -46,7 +51,6 @@ int main(){
     for(int i=0; i<5;i++){
         CriarPlanta(i);
     }
-    impPlantaDetalhado(2);
     tempo();
     return 0;
 }
@@ -60,12 +64,18 @@ void tempo(){
         es = Escolha();
         if(es == 'r')
             Regar();
+        if(es == 'c')
+            Cuidar();
+        if(es == 'x')
+            Podar();
         if(es == 'a' || es == 'v' || es == 'i')
             Ordenacao(es);
         if(es == 'd')
             Detalhes();
         if(es == 'p')
             acao(25);
+        if(es == 't')
+            TrocarPlanta();
         system("cls");
     }
 
@@ -88,7 +98,7 @@ void acao(int adTempo){
 
 void mudPlanta(){
     Planta *mudanca=biblioteca();
-    int atacada = rand()%10;
+    int atacada = rand()%15;
     dia++;
     for(int i=0;i<5;i++){
         if(mudanca[i].desenvolvimento != "morta"){
@@ -100,7 +110,7 @@ void mudPlanta(){
             if(mudanca[i].idade>7){
                 mudanca[i].desenvolvimento="adulto";
             }
-            if(atacada >= 6)
+            if(atacada <= 4)
                 mudanca[i].vida -= rand()%3;
             if(mudanca[i].vida <= 0 || mudanca[i].agua <= 0)
                 mudanca[i].desenvolvimento = "morta";
@@ -136,8 +146,8 @@ int qualPlanta(){
     cout << "Qual planta?" << endl;
     do{
         cin >> indice_planta;
-    }while(indice_planta < 0 || indice_planta >= 5);
-    return indice_planta;
+    }while(indice_planta <= 0 || indice_planta > 5);
+    return indice_planta-1;
 }
 
 void Regar(){
@@ -148,10 +158,33 @@ void Regar(){
     acao(tempo_regar);
 }
 
+void Podar(){
+    int const tempo_podar = 7;
+    int indice_planta = qualPlanta();
+    Planta *planta = biblioteca();
+    planta[indice_planta].vida -= 5;
+    acao(tempo_podar);
+}
+
+void Cuidar(){
+    int const tempo_cuidar = 12;
+    int indice_planta = qualPlanta();
+    Planta *planta = biblioteca();
+    planta[indice_planta].vida += 5;
+    acao(tempo_cuidar);
+}
+
+void TrocarPlanta(){
+    int const tempo_troca = 4;
+    int indice_planta = qualPlanta();
+    CriarPlanta(indice_planta);
+    acao(tempo_troca);
+}
+
 void Detalhes(){
     MergeIndicativo(0,5);
     int x = qualPlanta();
-    int indice = BuscaBi(x,0,5);
+    int indice = BuscaBi(x+1,0,5);
     impPlantaDetalhado(indice);
     system("pause");
 }
@@ -172,13 +205,13 @@ void CriarPlanta(int i){
 }
 
 string nomePlanta(){
-    string nomeP[4] = {"coisas","aleatorias","so","paratestar"};
-    return nomeP[rand()%4];
+    string nomeP[6] = {"Musgo","Orquidea","Araucaria","Amanita","Cyathus","Polyporus"};
+    return nomeP[rand()%6];
 }
 
 string definirReino(){
-    string nomeR[4] = {"fungus","mamidors","vegetal","suamae"};
-    return nomeR[rand()%4];
+    string nomeR[2] = {"Plantae","Fungi"};
+    return nomeR[rand()%2];
 }
 
 int BuscaBi(int x, int ini, int fim){
@@ -191,9 +224,9 @@ int BuscaBi(int x, int ini, int fim){
             return meio;
         else
             if(x < p[meio].indicativo)
-                BuscaBi(x,ini,meio-1);
+                return BuscaBi(x,ini,meio-1);
             else
-                BuscaBi(x,meio+1,fim);
+                return BuscaBi(x,meio+1,fim);
     }
 }
 
@@ -362,39 +395,49 @@ void impPlantaDetalhado(int l){
     Planta *planta=biblioteca();
     system("cls");
     gotoxy(0 , 1);
-    cout << "|" << planta[l].nome;
-    gotoxy(13 , 1);
+    cout << "|" << "Nome: " << planta[l].nome;
+    gotoxy(18 , 1);
     cout << "|";
     gotoxy(0 , 2);
-    cout << "|" << planta[l].desenvolvimento << endl;
-    gotoxy(13 , 2);
+    cout << "|" << "Estagio: " << planta[l].desenvolvimento << endl;
+    gotoxy(18 , 2);
     cout << "|";
     gotoxy(0 , 3);
-    cout << "|" << planta[l].idade << endl;
-    gotoxy(13 , 3);
+    cout << "|" << "Idade: " << planta[l].idade << endl;
+    gotoxy(18 , 3);
     cout << "|";
     gotoxy(0 , 4);
-    cout << "|" << planta[l].agua << endl;
-    gotoxy(13 , 4);
+    cout << "|" << "Agua: " << planta[l].agua << endl;
+    gotoxy(18 , 4);
     cout << "|";
     gotoxy(0 , 5);
-    cout << "|" << planta[l].reino << endl;
-    gotoxy(13 , 5);
+    cout << "|" << "Reino: " << planta[l].reino << endl;
+    gotoxy(18 , 5);
     cout << "|";
     gotoxy(0 , 6);
-    cout << "|" << planta[l].vida << endl;
-    gotoxy(13 , 6);
+    cout << "|" << "Saude: " << planta[l].vida << endl;
+    gotoxy(18 , 6);
     cout << "|";
     gotoxy(0 , 7);
-    cout << "|" << planta[l].indicativo << endl;
-    gotoxy(13 , 7);
+    cout << "|" << "Indice: " << planta[l].indicativo << endl;
+    gotoxy(18 , 7);
     cout << "|" << endl;
 }
 
 void impComandos(){
-    cout << "Regar uma planta(r)" << endl;
-    cout << "Ordenar baseado em: " << endl;
+    cout << "| Regar uma planta(r) | " << "Podar uma planta(x) | " << "Cuidar de uma planta(c) |" << endl;
+    cout << "| Ordenar baseado em: " << endl;
     cout << "| Quantidade de agua(a) || " << "Quantidade de vida(v) || " << "Indicativo da planta(i) |" << endl;
-    cout << "Detalhes de uma planta(d)" << endl;
+    cout << "| Detalhes de uma planta(d) |" << endl;
+    cout << "| Deseja trocar uma planta por outra nova?(t) |" << endl;
     cout << "Sair(s)" << endl;
+}
+
+void Teste_Busca_Bi(){
+    assert(BuscaBi(2,0,5) == 2);
+    assert(BuscaBi(3,0,5) == 3);
+    assert(BuscaBi(4,0,5) == 4);
+    assert(BuscaBi(5,0,5) == 5);
+    assert(BuscaBi(1,0,5) == 1);
+    assert(BuscaBi(6,0,5) == -1);
 }
