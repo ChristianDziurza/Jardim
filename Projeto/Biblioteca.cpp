@@ -45,7 +45,6 @@ int main(){
     for(int i=0; i<5;i++){
         CriarPlanta(i);
     }
-    cout << "Comecou" << endl;
     tempo();
     return 0;
 }
@@ -60,6 +59,7 @@ void tempo(){
             Regar();
         if(es == 'a' || es == 'v' || es == 'i')
             Ordenacao(es);
+        system("cls");
     }
 
 }
@@ -128,14 +128,7 @@ char Escolha(){
     return escolha;
 }
 
-void Ordenacao(char escolha){
-    if(escolha == 'a')
-        MergeAgua(0,5);
-    if(escolha == 'v')
-        MergeVida(0,5);
-    if(escolha == 'i')
-        MergeIndicativo(0,5);
-}
+
 
 int qualPlanta(){
     int indice_planta;
@@ -184,14 +177,7 @@ string definirReino(){
     return nomeR[rand()%4];
 }
 
-void MergeAgua(int inicio, int fim){
-    if(inicio < (fim-1)){
-        int meio = (inicio + fim)/2;
-        MergeAgua(inicio, meio);
-        MergeAgua(meio,fim);
-        IntercalaAgua(inicio,meio,fim);
-    }
-}
+
 void IntercalaAgua(int inicio, int meio, int fim){
     int i = inicio, j = meio, k = 0;
     Planta *w;
@@ -223,15 +209,16 @@ void IntercalaAgua(int inicio, int meio, int fim){
     delete[] w;
     w = NULL;
 }
-
-void MergeVida(int inicio, int fim){
+void MergeAgua(int inicio, int fim){
     if(inicio < (fim-1)){
         int meio = (inicio + fim)/2;
-        MergeVida(inicio, meio);
-        MergeVida(meio,fim);
-        IntercalaVida(inicio,meio,fim);
+        MergeAgua(inicio, meio);
+        MergeAgua(meio,fim);
+        IntercalaAgua(inicio,meio,fim);
     }
 }
+
+
 void IntercalaVida(int inicio, int meio, int fim){
     int i = inicio, j = meio, k = 0;
     Planta *w;
@@ -264,14 +251,16 @@ void IntercalaVida(int inicio, int meio, int fim){
     w = NULL;
 }
 
-void MergeIndicativo(int inicio, int fim){
+void MergeVida(int inicio, int fim){
     if(inicio < (fim-1)){
         int meio = (inicio + fim)/2;
-        MergeIndicativo(inicio, meio);
-        MergeIndicativo(meio,fim);
-        IntercalIndicativo(inicio,meio,fim);
+        MergeVida(inicio, meio);
+        MergeVida(meio,fim);
+        IntercalaVida(inicio,meio,fim);
     }
 }
+
+
 void IntercalIndicativo(int inicio, int meio, int fim){
     int i = inicio, j = meio, k = 0;
     Planta *w;
@@ -304,25 +293,44 @@ void IntercalIndicativo(int inicio, int meio, int fim){
     w = NULL;
 }
 
-void impPlanta(int l){
-    Planta *planta=biblioteca();
-    gotoxy(0 + (15l), 1);
-    cout << "|" << planta[l].nome;
-    gotoxy(13 + (15l), 1);
-    cout << "|";
-    gotoxy(0 + (15l), 2);
-    cout << "|" << planta[l].desenvolvimento << endl;
-    gotoxy(13 + (15l), 2);
-    cout << "|";
-    gotoxy(0 + (15l), 3);
-    cout << "|" << planta[l].idade << endl;
-    gotoxy(13 + (15*l), 3);
-    cout << "|" << endl;
+void MergeIndicativo(int inicio, int fim){
+    if(inicio < (fim-1)){
+        int meio = (inicio + fim)/2;
+        MergeIndicativo(inicio, meio);
+        MergeIndicativo(meio,fim);
+        IntercalIndicativo(inicio,meio,fim);
+    }
 }
+
+void Ordenacao(char escolha){
+    if(escolha == 'a')
+        MergeAgua(0,5);
+    if(escolha == 'v')
+        MergeVida(0,5);
+    if(escolha == 'i')
+        MergeIndicativo(0,5);
+}
+
+
 
 void gotoxy(int x, int y){
     COORD coordinate;
     coordinate.X = x;
     coordinate.Y = y;
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coordinate);
+}
+void impPlanta(int l){
+    Planta *planta=biblioteca();
+    gotoxy(0 + (15*l), 1);
+    cout << "|" << planta[l].nome;
+    gotoxy(13 + (15*l), 1);
+    cout << "|";
+    gotoxy(0 + (15*l), 2);
+    cout << "|" << planta[l].desenvolvimento << endl;
+    gotoxy(13 + (15*l), 2);
+    cout << "|";
+    gotoxy(0 + (15*l), 3);
+    cout << "|" << planta[l].idade << endl;
+    gotoxy(13 + (15*l), 3);
+    cout << "|" << endl;
 }
