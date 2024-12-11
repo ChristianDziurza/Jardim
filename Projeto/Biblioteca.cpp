@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 using namespace std;
+int dia = 0;
 
 typedef struct{
     char nome[30];
@@ -13,6 +14,11 @@ typedef struct{
     int idade;
 }Planta;
 
+void impPlanta();
+void tempo();
+void acao(int qTempo);
+void mudPlanta();
+bool terminaDia();
 Planta* biblioteca();
 void CriarPlanta(int n, int i);
 string nomePlanta();
@@ -25,6 +31,14 @@ int main(){
     cin >> n;
     for(int i=0; i<5;i++){
         CriarPlanta(n,i);
+        }
+    tempo();
+     return 0;
+}
+
+void impPlanta(){
+    Planta *planta=biblioteca();
+    for(int i=0; i<5;i++){
         cout << planta[i].nome << endl;
         cout << planta[i].reino << endl;
         cout << planta[i].desenvolvimento << endl;
@@ -34,8 +48,60 @@ int main(){
         cout << planta[i].indicativo << endl;
         cout << endl << endl;
     }
-    
-     return 0;
+}
+
+void tempo(){
+    int masitempo =0;
+    while (cin>> masitempo){
+        acao(masitempo);
+    }
+
+    }
+
+void acao(int adTempo){
+    static int qTempo=0;
+    qTempo += adTempo;
+    if(qTempo >=24){
+        if(terminaDia()){
+            cout << "planta antes"<< endl;
+            impPlanta();
+            mudPlanta();
+            cout << "planta hoje"<< endl;
+            impPlanta();
+            qTempo=0;
+        }
+        else{
+            qTempo -= adTempo;
+        }
+    }
+
+}
+
+void mudPlanta(){
+    Planta *mudanca=biblioteca();
+    dia++;
+    for(int i=0;i<5;i++){
+        mudanca[i].idade++;
+        mudanca[i].agua-=rand() %98+1;
+        if(mudanca[i].idade>3 && mudanca[i].idade<=7){
+            mudanca[i].desenvolvimento="muda";
+        }
+        if(mudanca[i].idade>7){
+            mudanca[i].desenvolvimento="adulto";
+        }
+    }
+
+}
+
+bool terminaDia(){
+    char td='l';
+    cout << "Quer terminar o dia?"<< endl << "(s)= sim    (n)=nao"<< endl;
+    while (td!='s'&& td!='n'){
+       cin >> td; 
+    }
+    if(td == 's'){
+        return true;
+    }else return false;
 }
 
 Planta* biblioteca(){
