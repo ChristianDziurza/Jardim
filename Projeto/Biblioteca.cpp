@@ -11,27 +11,28 @@ typedef struct{
     string desenvolvimento;
     char reino[30];
     int indicativo;
-    bool flag;
     int idade;
 }Planta;
-
-typedef struct{
-    Planta planta;
-    int flag;
-}Pote;
 
 
 void tempo();
 void acao(int qTempo);
 void mudPlanta();
 void CriarPlanta(int i);
-void nulificaPlanta(int i);
-void Merge(int inicio, int fim);
-void Intercala(int inicio, int meio, int fim);
+void IntercalaAgua(int inicio, int meio, int fim);
+void MergeAgua(int inicio, int fim);
+void IntercalaVida(int inicio, int meio, int fim);
+void MergeVida(int inicio, int fim);
+void IntercalIndicativo(int inicio, int meio, int fim);
+void MergeIndicativo(int inicio, int fim);
 void Ordenacao(char escolha);
 void impPlanta(int l);
+void impPlantaDetalhado(int l);
+void impComandos();
 void gotoxy(int x, int y);
+void Detalhes();
 int qualPlanta();
+int BuscaBi(int x, int ini, int fim);
 bool terminaDia();
 Planta* biblioteca();
 string nomePlanta();
@@ -45,6 +46,7 @@ int main(){
     for(int i=0; i<5;i++){
         CriarPlanta(i);
     }
+    impPlantaDetalhado(2);
     tempo();
     return 0;
 }
@@ -54,11 +56,16 @@ void tempo(){
     while(es != 's'){
         for(int i=0;i<5;i++)
             impPlanta(i);
+            impComandos();
         es = Escolha();
         if(es == 'r')
             Regar();
         if(es == 'a' || es == 'v' || es == 'i')
             Ordenacao(es);
+        if(es == 'd')
+            Detalhes();
+        if(es == 'p')
+            acao(25);
         system("cls");
     }
 
@@ -117,18 +124,12 @@ Planta* biblioteca(){
     return &inventario[5];
 }
 
-Pote* jardim(){
-    static Pote potes[10];
-    return &potes[10];
-}
 
 char Escolha(){
     char escolha;
     cin >> escolha;
     return escolha;
 }
-
-
 
 int qualPlanta(){
     int indice_planta;
@@ -139,16 +140,20 @@ int qualPlanta(){
     return indice_planta;
 }
 
-void nulificaPlanta(int i){
-    Planta *plantas = biblioteca();
-    plantas[i].flag = 1;
-}
-
 void Regar(){
     int const tempo_regar = 2;
     int indice_planta = qualPlanta();
     Planta *planta = biblioteca();
     planta[indice_planta].agua += 25;
+    acao(tempo_regar);
+}
+
+void Detalhes(){
+    MergeIndicativo(0,5);
+    int x = qualPlanta();
+    int indice = BuscaBi(x,0,5);
+    impPlantaDetalhado(indice);
+    system("pause");
 }
 
 void CriarPlanta(int i){
@@ -164,7 +169,6 @@ void CriarPlanta(int i){
     ponteiro_planta[i].idade = 0;
     ponteiro_planta[i].vida = 10;
     ponteiro_planta[i].indicativo = i+1;
-    ponteiro_planta[i].flag = false;
 }
 
 string nomePlanta(){
@@ -177,6 +181,22 @@ string definirReino(){
     return nomeR[rand()%4];
 }
 
+int BuscaBi(int x, int ini, int fim){
+    Planta *p = biblioteca();
+    if(ini > fim)
+        return -1;
+    else{
+        int meio = (ini+fim)/2;
+        if(p[meio].indicativo == x)
+            return meio;
+        else
+            if(x < p[meio].indicativo)
+                BuscaBi(x,ini,meio-1);
+            else
+                BuscaBi(x,meio+1,fim);
+    }
+}
+
 
 void IntercalaAgua(int inicio, int meio, int fim){
     int i = inicio, j = meio, k = 0;
@@ -185,27 +205,27 @@ void IntercalaAgua(int inicio, int meio, int fim){
     w = new(nothrow) Planta[fim];
     while(i < meio && j < fim){
         if(planta[i].agua < planta[j].agua){
-            w[k].agua = planta[i].agua;
+            w[k] = planta[i];
             i++;
         }
         else{
-            w[k].agua = planta[j].agua;
+            w[k] = planta[j];
             j++;
         }
         k++;
     }
     while(i < meio){
-        w[k].agua = planta[i].agua;
+        w[k] = planta[i];
         i++;
         k++;
     }
     while(j < fim){
-        w[k].agua = planta[j].agua;
+        w[k] = planta[j];
         j++;
         k++;
     }
     for(k = 0; k < fim - inicio; k++)
-        planta[inicio + k].agua = w[k].agua;
+        planta[inicio + k] = w[k];
     delete[] w;
     w = NULL;
 }
@@ -218,7 +238,6 @@ void MergeAgua(int inicio, int fim){
     }
 }
 
-
 void IntercalaVida(int inicio, int meio, int fim){
     int i = inicio, j = meio, k = 0;
     Planta *w;
@@ -226,27 +245,27 @@ void IntercalaVida(int inicio, int meio, int fim){
     w = new(nothrow) Planta[fim];
     while(i < meio && j < fim){
         if(planta[i].vida < planta[j].vida){
-            w[k].vida = planta[i].vida;
+            w[k] = planta[i];
             i++;
         }
         else{
-            w[k].vida = planta[j].vida;
+            w[k] = planta[j];
             j++;
         }
         k++;
     }
     while(i < meio){
-        w[k].vida = planta[i].vida;
+        w[k] = planta[i];
         i++;
         k++;
     }
     while(j < fim){
-        w[k].vida = planta[j].vida;
+        w[k] = planta[j];
         j++;
         k++;
     }
     for(k = 0; k < fim - inicio; k++)
-        planta[inicio + k].vida = w[k].vida;
+        planta[inicio + k] = w[k];
     delete[] w;
     w = NULL;
 }
@@ -268,27 +287,27 @@ void IntercalIndicativo(int inicio, int meio, int fim){
     w = new(nothrow) Planta[fim];
     while(i < meio && j < fim){
         if(planta[i].indicativo < planta[j].indicativo){
-            w[k].indicativo = planta[i].indicativo;
+            w[k] = planta[i];
             i++;
         }
         else{
-            w[k].indicativo = planta[j].indicativo;
+            w[k] = planta[j];
             j++;
         }
         k++;
     }
     while(i < meio){
-        w[k].indicativo = planta[i].indicativo;
+        w[k] = planta[i];
         i++;
         k++;
     }
     while(j < fim){
-        w[k].indicativo = planta[j].indicativo;
+        w[k] = planta[j];
         j++;
         k++;
     }
     for(k = 0; k < fim - inicio; k++)
-        planta[inicio + k].indicativo = w[k].indicativo;
+        planta[inicio + k] = w[k];
     delete[] w;
     w = NULL;
 }
@@ -330,7 +349,52 @@ void impPlanta(int l){
     gotoxy(13 + (15*l), 2);
     cout << "|";
     gotoxy(0 + (15*l), 3);
-    cout << "|" << planta[l].idade << endl;
+    cout << "|" << planta[l].indicativo;
     gotoxy(13 + (15*l), 3);
+    cout << "|";
+    gotoxy(0 + (15*l), 4);
+    cout << "|" << planta[l].idade << endl;
+    gotoxy(13 + (15*l), 4);
     cout << "|" << endl;
+}
+
+void impPlantaDetalhado(int l){
+    Planta *planta=biblioteca();
+    system("cls");
+    gotoxy(0 , 1);
+    cout << "|" << planta[l].nome;
+    gotoxy(13 , 1);
+    cout << "|";
+    gotoxy(0 , 2);
+    cout << "|" << planta[l].desenvolvimento << endl;
+    gotoxy(13 , 2);
+    cout << "|";
+    gotoxy(0 , 3);
+    cout << "|" << planta[l].idade << endl;
+    gotoxy(13 , 3);
+    cout << "|";
+    gotoxy(0 , 4);
+    cout << "|" << planta[l].agua << endl;
+    gotoxy(13 , 4);
+    cout << "|";
+    gotoxy(0 , 5);
+    cout << "|" << planta[l].reino << endl;
+    gotoxy(13 , 5);
+    cout << "|";
+    gotoxy(0 , 6);
+    cout << "|" << planta[l].vida << endl;
+    gotoxy(13 , 6);
+    cout << "|";
+    gotoxy(0 , 7);
+    cout << "|" << planta[l].indicativo << endl;
+    gotoxy(13 , 7);
+    cout << "|" << endl;
+}
+
+void impComandos(){
+    cout << "Regar uma planta(r)" << endl;
+    cout << "Ordenar baseado em: " << endl;
+    cout << "| Quantidade de agua(a) || " << "Quantidade de vida(v) || " << "Indicativo da planta(i) |" << endl;
+    cout << "Detalhes de uma planta(d)" << endl;
+    cout << "Sair(s)" << endl;
 }
