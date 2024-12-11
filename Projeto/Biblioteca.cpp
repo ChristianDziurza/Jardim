@@ -10,6 +10,7 @@ typedef struct{
     string desenvolvimento;
     char reino[30];
     int indicativo;
+    int flag;
     int x,y;
     int idade;
 }Planta;
@@ -23,47 +24,51 @@ void impPlanta();
 void tempo();
 void acao(int qTempo);
 void mudPlanta();
-void CriarPlanta(int n, int i);
+void CriarPlanta(int i);
 void alterarPote();
 void nulificaPlanta(int i);
 bool terminaDia();
 Planta* biblioteca();
 string nomePlanta();
 string definirReino();
+char escolha();
 
 int main(){
     srand(time(NULL));
     Planta *planta = biblioteca();
-    int n;
-    cin >> n;
     for(int i=0; i<5;i++){
-        CriarPlanta(n,i);
-        }
+        CriarPlanta(i);
+    }
+    cout << "Comecou" << endl;
     tempo();
-     return 0;
+    return 0;
 }
 
 void impPlanta(){
     Planta *planta=biblioteca();
+    int i = 0;
     for(int i=0; i<5;i++){
-        cout << planta[i].nome << endl;
-        cout << planta[i].reino << endl;
-        cout << planta[i].desenvolvimento << endl;
-        cout << planta[i].agua << endl;
-        cout << planta[i].vida << endl;
-        cout << planta[i].idade << endl;
-        cout << planta[i].indicativo << endl;
-        cout << endl << endl;
+        if(planta[i].flag == 0){
+            cout << planta[i].nome << endl;
+            cout << planta[i].reino << endl;
+            cout << planta[i].desenvolvimento << endl;
+            cout << planta[i].agua << endl;
+            cout << planta[i].vida << endl;
+            cout << planta[i].idade << endl;
+            cout << planta[i].indicativo << endl;
+            cout << endl << endl;
+        }
     }
 }
 
 void tempo(){
-    int masitempo =0;
-    while (cin>> masitempo){
-        acao(masitempo);
+    escolha();
+    while(escolha() != 's'){
+        if(escolha() == 'p')
+            alterarPote();
     }
 
-    }
+}
 
 void acao(int adTempo){
     static int qTempo=0;
@@ -121,27 +126,36 @@ Pote* jardim(){
     return &potes[10];
 }
 
+char escolha(){
+    char escolha;
+    cin >> escolha;
+    return escolha;
+}
+
 void alterarPote(){
     int indice_pote, indicativo_planta;
+    int const tempo_gasto = 24;
     bool pote = true;
     do{
         cout << "Escolhe o pote" << endl;
         do{
             cin >> indice_pote;
-        }while(indice_pote <= 10 && indice_pote > 0 );
+        }while(indice_pote > 10 && indice_pote < 1 );
         indice_pote--;
         Pote *ponteiro_potes = jardim();
         cout << "Qual das cinco plantas voce deseja colocar nesse pote?" << endl;
         do{
             cin >> indicativo_planta;
-        }while(indicativo_planta > 0 && indicativo_planta <= 5);
+        }while(indicativo_planta < 1 && indicativo_planta > 5);
         Planta *ponteiro_planta = biblioteca();
         for(int i = 0; i<5; i++){
-            if(ponteiro_planta[i].indicativo == indicativo_planta){
-                if(ponteiro_potes[indice_pote].flag != 0){
+            if(ponteiro_planta[i].indicativo == indicativo_planta && ponteiro_planta[i].flag == 0){
+                if(ponteiro_potes[indice_pote].flag == 0){
                     ponteiro_potes[indice_pote].planta = ponteiro_planta[i];
-                    nulificaPlanta(i);
+                    ponteiro_potes[indice_pote].flag = 1;
+                    acao(tempo_gasto);
                     pote = false;
+                    break;
                 }
                 else{
                     cout << "Pote cheio pae" << endl;
@@ -152,18 +166,10 @@ void alterarPote(){
 }
 void nulificaPlanta(int i){
     Planta *plantas = biblioteca();
-    plantas[i].agua = NULL;
-    plantas[i].desenvolvimento = "";
-    plantas[i].idade = NULL;
-    plantas[i].indicativo = NULL;
-    plantas[i].vida = NULL;
-    for(int j = 0; j<30; j++){
-        plantas[i].nome[j] = NULL;
-        plantas[i].reino[j] = NULL;
-    }
+    plantas[i].flag = 1;
 }
 
-void CriarPlanta(int n, int i){
+void CriarPlanta(int i){
     string nomeP = nomePlanta();
     string nomeR = definirReino();
     Planta *ponteiro_planta = biblioteca();
@@ -176,6 +182,7 @@ void CriarPlanta(int n, int i){
     ponteiro_planta[i].idade = 0;
     ponteiro_planta[i].vida = 10;
     ponteiro_planta[i].indicativo = i+1;
+    ponteiro_planta[i].flag = 0;
 }
 
 string nomePlanta(){
