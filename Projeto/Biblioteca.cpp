@@ -14,13 +14,20 @@ typedef struct{
     int idade;
 }Planta;
 
+typedef struct{
+    Planta planta;
+    int flag;
+}Pote;
+
 void impPlanta();
 void tempo();
 void acao(int qTempo);
 void mudPlanta();
+void CriarPlanta(int n, int i);
+void alterarPote();
+void nulificaPlanta();
 bool terminaDia();
 Planta* biblioteca();
-void CriarPlanta(int n, int i);
 string nomePlanta();
 string definirReino();
 
@@ -108,6 +115,26 @@ Planta* biblioteca(){
     static Planta inventario[5];
     return &inventario[5];
 }
+
+Pote* jardim(){
+    static Pote potes[10];
+    return &potes[10];
+}
+
+void alterarPote(){
+    int indice_pote, indicativo_planta;
+    cout << "Escolhe o pote" << endl;
+    do{
+        cin >> indice_pote;
+    }while(indice_pote <= 10 && indice_pote > 0);
+    indice_pote--;
+    Pote *ponteiro_potes = jardim();
+    cout << "Qual das cinco plantas voce deseja colocar nesse pote?" << endl;
+    do{
+        cin >> indicativo_planta;
+    }while(indicativo_planta > 0 && indicativo_planta <= 5);
+}
+
 void CriarPlanta(int n, int i){
     string nomeP = nomePlanta();
     string nomeR = definirReino();
