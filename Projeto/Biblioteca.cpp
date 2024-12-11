@@ -25,7 +25,7 @@ void acao(int qTempo);
 void mudPlanta();
 void CriarPlanta(int n, int i);
 void alterarPote();
-void nulificaPlanta();
+void nulificaPlanta(int i);
 bool terminaDia();
 Planta* biblioteca();
 string nomePlanta();
@@ -123,16 +123,44 @@ Pote* jardim(){
 
 void alterarPote(){
     int indice_pote, indicativo_planta;
-    cout << "Escolhe o pote" << endl;
+    bool pote = true;
     do{
-        cin >> indice_pote;
-    }while(indice_pote <= 10 && indice_pote > 0);
-    indice_pote--;
-    Pote *ponteiro_potes = jardim();
-    cout << "Qual das cinco plantas voce deseja colocar nesse pote?" << endl;
-    do{
-        cin >> indicativo_planta;
-    }while(indicativo_planta > 0 && indicativo_planta <= 5);
+        cout << "Escolhe o pote" << endl;
+        do{
+            cin >> indice_pote;
+        }while(indice_pote <= 10 && indice_pote > 0 );
+        indice_pote--;
+        Pote *ponteiro_potes = jardim();
+        cout << "Qual das cinco plantas voce deseja colocar nesse pote?" << endl;
+        do{
+            cin >> indicativo_planta;
+        }while(indicativo_planta > 0 && indicativo_planta <= 5);
+        Planta *ponteiro_planta = biblioteca();
+        for(int i = 0; i<5; i++){
+            if(ponteiro_planta[i].indicativo == indicativo_planta){
+                if(ponteiro_potes[indice_pote].flag != 0){
+                    ponteiro_potes[indice_pote].planta = ponteiro_planta[i];
+                    nulificaPlanta(i);
+                    pote = false;
+                }
+                else{
+                    cout << "Pote cheio pae" << endl;
+                }
+            }
+        }
+    }while(pote);
+}
+void nulificaPlanta(int i){
+    Planta *plantas = biblioteca();
+    plantas[i].agua = NULL;
+    plantas[i].desenvolvimento = "";
+    plantas[i].idade = NULL;
+    plantas[i].indicativo = NULL;
+    plantas[i].vida = NULL;
+    for(int j = 0; j<30; j++){
+        plantas[i].nome[j] = NULL;
+        plantas[i].reino[j] = NULL;
+    }
 }
 
 void CriarPlanta(int n, int i){
